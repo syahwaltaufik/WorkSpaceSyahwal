@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tugas JS & CSS: Operator</title>
+
+    <link rel="stylesheet" href="style.css">
+
+    <style>
+        .teks-petunjuk {
+            font-size: 14px;
+            color: #555;
+            margin-bottom: 15px;
+            font-style: italic;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h2 style="text-align: center; color: #005A99; margin-top: 0;">Aplikasi Cek Kelulusan</h2>
+        
+        <p class="teks-petunjuk">Silakan masukkan nilai tugas dan ujian Anda di bawah ini:</p>
+        
+        <label>Nilai Tugas:</label>
+        <input type="number" id="inputTugas" placeholder="Masukkan nilai tugas...">
+        
+        <label>Nilai Ujian:</label>
+        <input type="number" id="inputUjian" placeholder="Masukkan nilai ujian...">
+        
+        <button onclick="hitungNilai()">Hitung Hasil</button>
+        
+        <div id="hasil">Hasil akan muncul di sini...</div>
+    </div>
+
+    <script src="script.js"></script>
+
+</body>
+</html>
