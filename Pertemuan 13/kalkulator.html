@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tugas 3 - Kalkulator Input Manual</title>
+    
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #2c3e50;
+            margin: 0;
+        }
+        .calculator {
+            background-color: #ecf0f1;
+            padding: 25px;
+            border-radius: 15px;
+            box-shadow: 0px 10px 20px rgba(0,0,0,0.3);
+            width: 280px;
+        }
+        h3 {
+            text-align: center;
+            color: #34495e;
+            margin-top: 0;
+            margin-bottom: 15px;
+        }
+        /* Kolom input sekarang bisa diketik manual */
+        #display {
+            width: 100%;
+            height: 60px;
+            background-color: #ffffff;
+            color: #2c3e50;
+            text-align: right;
+            font-size: 28px;
+            border: 2px solid #bdc3c7;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            padding: 10px 15px;
+            box-sizing: border-box;
+            outline: none;
+            transition: border-color 0.3s;
+        }
+        #display:focus {
+            border-color: #3498db;
+        }
+        .buttons {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 12px;
+        }
+        button {
+            padding: 15px;
+            font-size: 20px;
+            font-weight: bold;
+            background-color: #ecf0f1;
+            color: #2c3e50;
+            border: 1px solid #bdc3c7;
+            border-radius: 8px;
+            cursor: pointer;
+            box-shadow: 0px 4px 0px #bdc3c7;
+            transition: all 0.1s;
+        }
+        button:active {
+            transform: translateY(4px);
+            box-shadow: 0px 0px 0px #bdc3c7;
+        }
+        .operator { background-color: #f39c12; color: white; border-color: #e67e22; box-shadow: 0px 4px 0px #d35400;}
+        .operator:active { box-shadow: 0px 0px 0px #d35400; }
+        
+        .clear { background-color: #27ae60; color: white; border-color: #2ecc71; box-shadow: 0px 4px 0px #219653; }
+        .clear:active { box-shadow: 0px 0px 0px #e43232; }
+        
+        .equal { background-color: #e74c3c; color: white; grid-column: span 4; border-color: #c0392b; box-shadow: 0px 4px 0px #c0392b;}
+        .equal:active { box-shadow: 0px 0px 0px #2bc03f; }
+    </style>
+</head>
+<body>
+
+<div class="calculator">
+    <h3>Kalkulator</h3>
+    
+    <input type="text" id="display" placeholder="Ketik angka..." autofocus>
+    
+    <div class="buttons">
+        <button onclick="appendValue('7')">7</button>
+        <button onclick="appendValue('8')">8</button>
+        <button onclick="appendValue('9')">9</button>
+        <button class="operator" onclick="appendValue('/')">÷</button>
+
+        <button onclick="appendValue('4')">4</button>
+        <button onclick="appendValue('5')">5</button>
+        <button onclick="appendValue('6')">6</button>
+        <button class="operator" onclick="appendValue('*')">×</button>
+
+        <button onclick="appendValue('1')">1</button>
+        <button onclick="appendValue('2')">2</button>
+        <button onclick="appendValue('3')">3</button>
+        <button class="operator" onclick="appendValue('-')">-</button>
+
+        <button onclick="appendValue('0')">0</button>
+        <button onclick="appendValue('.')">.</button>
+        <button class="clear" onclick="clearDisplay()">(C)</button>
+        <button class="operator" onclick="appendValue('+')">+</button>
+
+        
+        <button class="equal" onclick="calculate()">=</button>
+    </div>
+</div>
+
+<script>
+    const display = document.getElementById('display');
+
+    // Fungsi untuk menambah angka/operator ke layar jika tombol di layar diklik
+    function appendValue(value) {
+        // Jika tampilan error, bersihkan dulu sebelum menambah angka baru
+        if(display.value === 'Error') {
+            display.value = '';
+        }
+        
+        // Kita ubah simbol tampilan menjadi operator matematika yang dipahami sistem
+        if (value === '÷') value = '/';
+        if (value === '×') value = '*';
+        
+        display.value += value;
+        display.focus(); // Mengembalikan kursor ke dalam input
+    }
+
+    // Fungsi untuk membersihkan layar
+    function clearDisplay() {
+        display.value = '';
+        display.focus();
+    }
+
+    // Fungsi untuk menghitung hasil matematika
+    function calculate() {
+        try {
+            // Cek jika kosong
+            if (display.value === '') return;
+            
+            // eval() akan memproses string "10+5" menjadi 15
+            // Kita juga mengganti karakter jika user mengetik manual 'x' atau ':'
+            let expression = display.value.replace(/x/g, '*').replace(/:/g, '/');
+            
+            let result = eval(expression);
+            
+            // Jika hasilnya bukan angka (misal user ketik huruf), tampilkan error
+            if (isNaN(result) || result === Infinity) {
+                throw new Error("Invalid");
+            }
+            
+            display.value = result;
+        } catch (error) {
+            display.value = 'Error';
+            // Menghapus tulisan error otomatis setelah 1.5 detik
+            setTimeout(clearDisplay, 1500);
+        }
+    }
+
+    // Fitur Tambahan: Memungkinkan tekan tombol "Enter" di keyboard untuk menghitung
+    display.addEventListener('keypress', function (e) {
+        if (e.key === 'Enter') {
+            e.preventDefault(); // Mencegah reload halaman
+            calculate();
+        }
+    });
+</script>
+
+</body>
+</html>

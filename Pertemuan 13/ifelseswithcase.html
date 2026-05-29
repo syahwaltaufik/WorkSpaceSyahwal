@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <title>Tugas 1 - Percabangan Kompleks (Input Manual)</title>
+    <style>
+        body { font-family: Arial, sans-serif; padding: 20px; }
+        .container { border: 1px solid #ccc; padding: 20px; border-radius: 8px; max-width: 400px; }
+        input, button { padding: 8px; margin-top: 10px; }
+        #hasilDiv { margin-top: 20px; padding: 10px; background-color: #f9f9f9; border-left: 4px solid #4CAF50; display: none; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>Cek Nilai Mahasiswa</h2>
+        
+        <label for="inputNilai">Masukkan Nilai Angka (0-100): </label><br>
+        <input type="number" id="inputNilai" placeholder="Contoh: 85" min="0" max="100">
+        <button onclick="prosesNilai()">Cek Nilai</button>
+
+        <div id="hasilDiv"></div>
+    </div>
+
+    <script>
+        function prosesNilai() {
+            // Mengambil nilai yang diinputkan user
+            let nilaiInput = document.getElementById('inputNilai').value;
+            let hasilDiv = document.getElementById('hasilDiv');
+            let nilaiHuruf;
+
+            // Validasi jika input dibiarkan kosong
+            if (nilaiInput === "") {
+                hasilDiv.style.display = "block";
+                hasilDiv.style.borderLeftColor = "red";
+                hasilDiv.innerHTML = "<p style='color:red;'>Nilai tidak boleh kosong. Silakan masukkan angka!</p>";
+                return; // Menghentikan eksekusi kode di bawahnya
+            }
+
+            // Mengubah tipe data string dari input menjadi angka (integer)
+            let nilaiAngka = parseInt(nilaiInput);
+
+            // 1. Logika IF-ELSE yang kompleks untuk menentukan grade
+            if (nilaiAngka >= 90 && nilaiAngka <= 100) {
+                nilaiHuruf = 'A';
+            } else if (nilaiAngka >= 80 && nilaiAngka < 90) {
+                nilaiHuruf = 'B';
+            } else if (nilaiAngka >= 70 && nilaiAngka < 80) {
+                nilaiHuruf = 'C';
+            } else if (nilaiAngka >= 60 && nilaiAngka < 70) {
+                nilaiHuruf = 'D';
+            } else if (nilaiAngka >= 0 && nilaiAngka < 60) {
+                nilaiHuruf = 'E';
+            } else {
+                hasilDiv.style.display = "block";
+                hasilDiv.style.borderLeftColor = "red";
+                hasilDiv.innerHTML = "<p style='color:red;'>Nilai tidak valid! Masukkan rentang 0 - 100.</p>";
+                return;
+            }
+
+            // 2. Logika SWITCH CASE untuk menentukan deskripsi/pesan
+            let pesan;
+            switch (nilaiHuruf) {
+                case 'A':
+                    pesan = "Luar biasa! Kamu lulus dengan predikat Cumlaude.";
+                    break;
+                case 'B':
+                    pesan = "Kerja bagus! Pertahankan prestasimu di semester depan.";
+                    break;
+                case 'C':
+                    pesan = "Cukup. Tingkatkan lagi belajarmu agar mendapat nilai lebih baik.";
+                    break;
+                case 'D':
+                case 'E':
+                    pesan = "Mohon maaf, kamu harus mengulang mata kuliah ini tahun depan.";
+                    break;
+            }
+
+            // Menampilkan output kembali ke layar HTML
+            hasilDiv.style.display = "block";
+            hasilDiv.style.borderLeftColor = "#4CAF50"; // Mengembalikan warna garis hijau jika sukses
+            hasilDiv.innerHTML = `
+                <p>Nilai Angka: <strong>${nilaiAngka}</strong></p>
+                <p>Grade: <strong>${nilaiHuruf}</strong></p>
+                <p>Catatan: <em>${pesan}</em></p>
+            `;
+        }
+    </script>
+</body>
+</html>

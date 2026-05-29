@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tugas 2 - Sistem Kasir Pintar</title>
+    <style>
+        /* CSS Styling untuk UI yang lebih menarik */
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #e0e5ec;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+        .card {
+            background: #ffffff;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+            width: 100%;
+            max-width: 400px;
+            box-sizing: border-box;
+        }
+        h2 {
+            text-align: center;
+            color: #2c3e50;
+            margin-top: 0;
+            margin-bottom: 25px;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        label {
+            display: block;
+            margin-bottom: 8px;
+            color: #34495e;
+            font-weight: 600;
+        }
+        input[type="number"], select {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #bdc3c7;
+            border-radius: 6px;
+            box-sizing: border-box;
+            font-size: 16px;
+            outline: none;
+            transition: border-color 0.3s;
+        }
+        input[type="number"]:focus, select:focus {
+            border-color: #3498db;
+        }
+        button {
+            width: 100%;
+            padding: 14px;
+            background-color: #3498db;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            font-weight: bold;
+            margin-top: 10px;
+        }
+        button:hover {
+            background-color: #2980b9;
+        }
+        .result {
+            margin-top: 25px;
+            padding: 15px;
+            background-color: #f8f9fa;
+            border-left: 5px solid #2ecc71;
+            border-radius: 4px;
+            display: none; /* Disembunyikan sampai tombol ditekan */
+        }
+        .result p {
+            margin: 8px 0;
+            color: #2c3e50;
+            display: flex;
+            justify-content: space-between;
+        }
+        .result .total {
+            font-size: 18px;
+            font-weight: bold;
+            color: #e74c3c;
+            margin-top: 15px;
+            border-top: 1px dashed #bdc3c7;
+            padding-top: 15px;
+        }
+        .error {
+            color: #e74c3c;
+            font-size: 14px;
+            margin-top: 5px;
+            display: none;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="card">
+        <h2>Sistem Kasir Pintar</h2>
+        
+        <div class="form-group">
+            <label for="totalBelanja">Total Belanja (Rp):</label>
+            <input type="number" id="totalBelanja" placeholder="Contoh: 150000" min="0">
+            <div class="error" id="errorBelanja">Nominal tidak valid. Masukkan angka yang benar!</div>
+        </div>
+
+        <div class="form-group">
+            <label for="statusMember">Status Keanggotaan:</label>
+            <select id="statusMember">
+                <option value="Non-Member">Bukan Member (0%)</option>
+                <option value="Reguler">Member Reguler (Diskon 10%)</option>
+                <option value="VIP">Member VIP (Diskon 20%)</option>
+            </select>
+        </div>
+
+        <button onclick="prosesTransaksi()">Hitung Total Tagihan</button>
+
+        <div class="result" id="hasilDiv">
+            </div>
+    </div>
+
+    <script>
+        // 1. Ini adalah contoh FUNCTION KOMPLEKS (punya 2 parameter & return value)
+        function hitungTotalBayar(total, status) {
+            let persentaseDiskon = 0;
+            const pajak = 0.11; // PPN 11%
+
+            // Menentukan diskon berdasarkan status
+            if (status === 'VIP') {
+                persentaseDiskon = 0.20;
+            } else if (status === 'Reguler') {
+                persentaseDiskon = 0.10;
+            }
+
+            // Proses aritmatika
+            let nilaiDiskon = total * persentaseDiskon;
+            let setelahDiskon = total - nilaiDiskon;
+            let nilaiPajak = setelahDiskon * pajak;
+            let totalAkhir = setelahDiskon + nilaiPajak;
+
+            // Mengembalikan nilai (return value) berupa Objek agar data terstruktur
+            return {
+                awal: total,
+                diskon: nilaiDiskon,
+                pajak: nilaiPajak,
+                akhir: totalAkhir
+            };
+        }
+
+        // 2. Fungsi untuk memproses interaksi dari UI
+        function prosesTransaksi() {
+            let inputBelanja = document.getElementById('totalBelanja').value;
+            let inputStatus = document.getElementById('statusMember').value;
+            let errorBelanja = document.getElementById('errorBelanja');
+            let hasilDiv = document.getElementById('hasilDiv');
+
+            // Validasi Input: Pastikan user mengisi angka lebih dari 0
+            if (inputBelanja === "" || inputBelanja <= 0) {
+                errorBelanja.style.display = "block";
+                hasilDiv.style.display = "none";
+                return;
+            }
+            errorBelanja.style.display = "none"; // Sembunyikan pesan error jika valid
+
+            let angkaBelanja = parseFloat(inputBelanja);
+
+            // Memanggil function kompleks dan menyimpan hasil 'return' ke dalam variabel 'rincian'
+            let rincian = hitungTotalBayar(angkaBelanja, inputStatus);
+
+            // Fungsi bantuan untuk memformat angka menjadi format Rupiah (opsional tapi bikin UI makin keren)
+            const formatRupiah = (angka) => "Rp " + angka.toLocaleString('id-ID');
+
+            // Menampilkan data ke layar (DOM Manipulation)
+            hasilDiv.style.display = "block";
+            hasilDiv.innerHTML = `
+                <p><span>Subtotal:</span> <strong>${formatRupiah(rincian.awal)}</strong></p>
+                <p><span>Diskon (${inputStatus}):</span> <strong>- ${formatRupiah(rincian.diskon)}</strong></p>
+                <p><span>PPN (11%):</span> <strong>+ ${formatRupiah(rincian.pajak)}</strong></p>
+                <p class="total"><span>Total Bayar:</span> <span>${formatRupiah(rincian.akhir)}</span></p>
+            `;
+        }
+    </script>
+
+</body>
+</html>
