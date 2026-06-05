@@ -1,0 +1,425 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CRUD Data Mahasiswa</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --primary-color: #4f46e5;
+            --primary-hover: #4338ca;
+            --success-color: #10b981;
+            --success-hover: #059669;
+            --danger-color: #ef4444;
+            --danger-hover: #dc2626;
+            --warning-color: #f59e0b;
+            --warning-hover: #d97706;
+            --text-main: #1f2937;
+            --text-muted: #6b7280;
+            --bg-body: #f3f4f6;
+            --bg-card: #ffffff;
+            --border-color: #e5e7eb;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: var(--bg-body);
+            color: var(--text-main);
+            margin: 0;
+            padding: 40px 20px;
+            display: flex;
+            justify-content: center;
+        }
+
+        .container {
+            background-color: var(--bg-card);
+            width: 100%;
+            max-width: 900px;
+            padding: 30px 40px;
+            border-radius: 16px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05);
+        }
+
+        h2 {
+            margin-top: 0;
+            margin-bottom: 25px;
+            color: var(--text-main);
+            font-weight: 600;
+            font-size: 24px;
+            border-left: 5px solid var(--primary-color);
+            padding-left: 10px;
+        }
+
+        /* Form Styling */
+        form {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-bottom: 40px;
+        }
+
+        .input-group {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .input-group label {
+            font-size: 14px;
+            font-weight: 500;
+            color: var(--text-main);
+        }
+
+        input, select {
+            padding: 12px 15px;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            font-family: 'Poppins', sans-serif;
+            font-size: 14px;
+            background-color: #f9fafb;
+            transition: all 0.3s ease;
+        }
+
+        input:focus, select:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            background-color: #fff;
+            box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.15);
+        }
+
+        input[readonly] {
+            background-color: #e5e7eb;
+            cursor: not-allowed;
+        }
+
+        /* Buttons Styling */
+        .btn-group {
+            grid-column: span 2;
+            display: flex;
+            gap: 15px;
+            margin-top: 10px;
+        }
+
+        button {
+            cursor: pointer;
+            border: none;
+            border-radius: 8px;
+            color: white;
+            font-weight: 500;
+            font-family: 'Poppins', sans-serif;
+            font-size: 15px;
+            padding: 12px 20px;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        button:active {
+            transform: scale(0.98);
+        }
+
+        /* Specific Buttons */
+        #btnTambah { 
+            background-color: var(--success-color); 
+            flex: 2;
+        }
+        #btnTambah:hover:not(:disabled) { background-color: var(--success-hover); }
+
+        #btnUpdate { 
+            background-color: var(--primary-color); 
+            flex: 2;
+        }
+        #btnUpdate:hover:not(:disabled) { background-color: var(--primary-hover); }
+        
+        #btnUpdate:disabled, #btnTambah:disabled {
+            background-color: #9ca3af !important;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        #btnBatal { 
+            background-color: var(--text-muted); 
+            display: none; 
+            flex: 1;
+        }
+        #btnBatal:hover { background-color: #4b5563; }
+
+        /* Table Styling */
+        .table-responsive {
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0;
+            margin-top: 10px;
+        }
+
+        th, td {
+            padding: 15px;
+            text-align: left;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        th {
+            background-color: #f8fafc;
+            color: var(--text-muted);
+            font-weight: 600;
+            font-size: 13px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        th:first-child { border-top-left-radius: 8px; }
+        th:last-child { border-top-right-radius: 8px; }
+
+        tbody tr {
+            transition: background-color 0.2s ease;
+        }
+
+        tbody tr:hover {
+            background-color: #f9fafb;
+        }
+
+        td {
+            font-size: 14px;
+            color: var(--text-main);
+            vertical-align: middle;
+        }
+
+        /* Action Buttons in Table */
+        .action-btns {
+            display: flex;
+            gap: 8px;
+        }
+
+        .btn-edit, .btn-delete {
+            padding: 6px 12px;
+            font-size: 12px;
+            border-radius: 6px;
+            font-weight: 500;
+        }
+
+        .btn-edit { 
+            background-color: var(--warning-color); 
+            color: white;
+        }
+        .btn-edit:hover { background-color: var(--warning-hover); }
+
+        .btn-delete { 
+            background-color: var(--danger-color); 
+        }
+        .btn-delete:hover { background-color: var(--danger-hover); }
+
+        hr {
+            border: 0;
+            height: 1px;
+            background: var(--border-color);
+            margin: 40px 0 30px 0;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 600px) {
+            form {
+                grid-template-columns: 1fr;
+            }
+            .btn-group {
+                grid-column: span 1;
+                flex-direction: column;
+            }
+            .container {
+                padding: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h2>Form Data Mahasiswa</h2>
+        
+        <form id="formMahasiswa">
+            <div class="input-group">
+                <label for="nim">NIM</label>
+                <input type="text" id="nim" placeholder="Masukkan NIM" required>
+            </div>
+            
+            <div class="input-group">
+                <label for="nama">Nama Mahasiswa</label>
+                <input type="text" id="nama" placeholder="Masukkan Nama Lengkap" required>
+            </div>
+            
+            <div class="input-group">
+                <label for="jurusan">Jurusan</label>
+                <select id="jurusan" required>
+                    <option value="" disabled selected>-- Pilih Jurusan --</option>
+                    <option value="Sistem Informasi">Sistem Informasi</option>
+                    <option value="Teknik Informatika">Teknik Informatika</option>
+                    <option value="Manajemen Bisnis">Manajemen Bisnis</option>
+                    <option value="Akuntansi">Akuntansi</option>
+                    <option value="Ilmu Komunikasi">Ilmu Komunikasi</option>
+                </select>
+            </div>
+
+            <div class="input-group">
+                <label for="fakultas">Fakultas</label>
+                <input type="text" id="fakultas" placeholder="Terisi Otomatis" readonly required>
+            </div>
+            
+            <div class="btn-group">
+                <button type="button" id="btnTambah">Tambah Mahasiswa</button>
+                <button type="button" id="btnUpdate" disabled>Update Data</button>
+                <button type="button" id="btnBatal">Batal</button>
+            </div>
+        </form>
+
+        <hr>
+
+        <h2>Daftar Mahasiswa</h2>
+        <div class="table-responsive">
+            <table>
+                <thead>
+                    <tr>
+                        <th>No</th>
+                        <th>NIM</th>
+                        <th>Nama</th>
+                        <th>Jurusan</th>
+                        <th>Fakultas</th>
+                        <th>Aksi</th>
+                    </tr>
+                </thead>
+                <tbody id="tabelBody">
+                    </tbody>
+            </table>
+        </div>
+    </div>
+
+    <script>
+        let dataMahasiswa = [];
+        let editIndex = -1;
+
+        const form = document.getElementById('formMahasiswa');
+        const jurusanDropdown = document.getElementById('jurusan');
+        const fakultasInput = document.getElementById('fakultas');
+        
+        const btnTambah = document.getElementById('btnTambah');
+        const btnUpdate = document.getElementById('btnUpdate');
+        const btnBatal = document.getElementById('btnBatal');
+
+        // Autofill Fakultas based on Jurusan
+        jurusanDropdown.addEventListener('change', function() {
+            const jurusan = this.value;
+            if (jurusan === 'Sistem Informasi' || jurusan === 'Teknik Informatika') {
+                fakultasInput.value = 'Teknik';
+            } else if (jurusan === 'Manajemen Bisnis' || jurusan === 'Akuntansi') {
+                fakultasInput.value = 'Ekonomi dan Bisnis';
+            } else if (jurusan === 'Ilmu Komunikasi') {
+                fakultasInput.value = 'Ilmu Komunikasi';
+            } else {
+                fakultasInput.value = '';
+            }
+        });
+
+        function getFormData() {
+            return {
+                nim: document.getElementById('nim').value,
+                nama: document.getElementById('nama').value,
+                jurusan: document.getElementById('jurusan').value,
+                fakultas: document.getElementById('fakultas').value
+            };
+        }
+
+        // Tambah Data
+        btnTambah.addEventListener('click', function() {
+            if(form.checkValidity()) {
+                dataMahasiswa.push(getFormData());
+                form.reset();
+                renderTabel();
+            } else {
+                form.reportValidity(); 
+            }
+        });
+
+        // Update Data
+        btnUpdate.addEventListener('click', function() {
+            if(form.checkValidity() && editIndex !== -1) {
+                dataMahasiswa[editIndex] = getFormData();
+                resetFormState();
+                renderTabel();
+            } else {
+                form.reportValidity();
+            }
+        });
+
+        // Render Tabel
+        function renderTabel() {
+            const tabelBody = document.getElementById('tabelBody');
+            tabelBody.innerHTML = '';
+
+            dataMahasiswa.forEach((mahasiswa, index) => {
+                const baris = document.createElement('tr');
+                baris.innerHTML = `
+                    <td>${index + 1}</td>
+                    <td><strong>${mahasiswa.nim}</strong></td>
+                    <td>${mahasiswa.nama}</td>
+                    <td>${mahasiswa.jurusan}</td>
+                    <td><span style="background-color: #e5e7eb; padding: 4px 8px; border-radius: 4px; font-size: 12px;">${mahasiswa.fakultas}</span></td>
+                    <td>
+                        <div class="action-btns">
+                            <button class="btn-edit" onclick="editData(${index})">Edit</button>
+                            <button class="btn-delete" onclick="hapusData(${index})">Hapus</button>
+                        </div>
+                    </td>
+                `;
+                tabelBody.appendChild(baris);
+            });
+        }
+
+        // Hapus Data
+        function hapusData(index) {
+            if(confirm('Yakin ingin menghapus data ini?')) {
+                dataMahasiswa.splice(index, 1);
+                
+                if(editIndex === index) {
+                    resetFormState();
+                }
+                renderTabel();
+            }
+        }
+
+        // Edit Data
+        function editData(index) {
+            const mhs = dataMahasiswa[index];
+            document.getElementById('nim').value = mhs.nim;
+            document.getElementById('nama').value = mhs.nama;
+            document.getElementById('jurusan').value = mhs.jurusan;
+            document.getElementById('fakultas').value = mhs.fakultas;
+
+            editIndex = index;
+
+            // UI Changes for Edit Mode
+            btnTambah.disabled = true;
+            btnUpdate.disabled = false;
+            btnBatal.style.display = 'flex';
+            
+            // Scroll ke atas (opsional agar user langsung melihat form)
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        // Reset Form State
+        btnBatal.addEventListener('click', resetFormState);
+        function resetFormState() {
+            form.reset();
+            editIndex = -1;
+            
+            btnTambah.disabled = false;
+            btnUpdate.disabled = true;
+            btnBatal.style.display = 'none';
+        }
+    </script>
+</body>
+</html>
