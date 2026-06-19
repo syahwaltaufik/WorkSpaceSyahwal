@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <title>Game Tangkap Koin</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      text-align: center;
+      background-color: #2c3e50;
+      color: white;
+    }
+    
+    /* Styling untuk area permainan */
+    #area-game {
+      width: 400px;
+      height: 400px;
+      margin: 20px auto;
+      border: 4px solid #ecf0f1;
+      position: relative;
+      background-color: #34495e;
+      border-radius: 10px;
+      overflow: hidden;
+    }
+
+    /* Styling yang akan digunakan oleh class JS */
+    .koin {
+      width: 40px;
+      height: 40px;
+      background-color: #f1c40f;
+      border-radius: 50%;
+      position: absolute;
+      cursor: pointer;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+      transition: top 0.2s, left 0.2s; /* Animasi pergerakan yang halus */
+    }
+
+    .koin:active {
+      transform: scale(0.8);
+    }
+  </style>
+</head>
+<body>
+
+  <h1>Game Tangkap Koin</h1>
+  <h2>Skor: <span id="skor">0</span></h2>
+  <div id="area-game"></div>
+
+  <script>
+    // 1. CLASS DASAR (Parent Class)
+    class EntitasGame {
+      constructor(idArea) {
+        this.area = document.getElementById(idArea);
+        this.elemen = document.createElement('div');
+        this.area.appendChild(this.elemen);
+      }
+    }
+
+    // 2. CLASS INHERITANCE (Child Class mewarisi EntitasGame)
+    class Koin extends EntitasGame {
+      constructor(idArea, gameUtama) {
+        super(idArea); // Mengirim idArea ke Parent Class
+        this.gameUtama = gameUtama;
+        
+        // Menambahkan class CSS ke elemen HTML
+        this.elemen.classList.add('koin');
+
+        // Menambahkan interaksi klik
+        this.elemen.addEventListener('click', () => {
+          this.gameUtama.tambahSkor();
+          this.pindahPosisi();
+        });
+
+        // Tampilkan di posisi acak saat pertama kali dibuat
+        this.pindahPosisi();
+      }
+
+      // Metode untuk memindahkan koin ke koordinat acak
+      pindahPosisi() {
+        const batasX = 400 - 40; // Lebar area dikurangi lebar koin
+        const batasY = 400 - 40; // Tinggi area dikurangi tinggi koin
+        
+        const acakX = Math.floor(Math.random() * batasX);
+        const acakY = Math.floor(Math.random() * batasY);
+
+        this.elemen.style.left = `${acakX}px`;
+        this.elemen.style.top = `${acakY}px`;
+      }
+    }
+
+    // 3. CLASS MANAJER GAME
+    class Game {
+      constructor() {
+        this.skor = 0;
+        this.elemenSkor = document.getElementById('skor');
+        
+        // Membuat instance/objek koin di dalam game
+        this.koin = new Koin('area-game', this);
+      }
+
+      tambahSkor() {
+        this.skor += 10;
+        this.elemenSkor.innerText = this.skor;
+      }
+    }
+
+    // Memulai game saat halaman dimuat
+    const gameBaru = new Game();
+  </script>
+
+</body>
+</html>
